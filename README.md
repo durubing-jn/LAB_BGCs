@@ -5,6 +5,8 @@
 ```sh
 #GENOME.FA epresents input in fasta format
 antismash GENOME.FA --taxon bacteria --output-dir PATH OF OUTPUT --genefinding-tool prodigal --cb-knownclusters -c 20 --cc-mibig --fullhmmer
+#
+batch_extract_antismash_json_v2.py
 ```
 
 ## 2.BiG-SCAPE
@@ -20,14 +22,24 @@ python bigscape.py -i gbk.files -o CGF.out --pfam_dir PFAM.db –cutoffs 0.5 0.7
 ## 3.Extraction of precursor peptide
 
 ```sh
-#The precursor peptide, including leader and core peptide regions, are obtained from gbk files using a Python script
-#extract_peptides.py utilized in this study is saved in the directory named scripts/
+#The precursor peptide, including leader and core peptide regions, are obtained from gbk files using "extract_peptides.py" located in the scripts/ directory
+
 extract_peptides.py
 ```
 
+## 4.Prediction of metabolites produced by BGCs 
 
+```sh
+#“--cb-knownclusters” option is used to compare our BGC sequences against the MIBiG database
+antismash 02.rep.BGC/${i}.gbk --taxon bacteria --output-dir out/${i} --genefinding-tool prodigal --cb-knownclusters -c 2 --cc-mibig --fullhmmer
+#Extract antismash annotation results
+python batch_extract_antismash_json_v2.py -i JSON.files -o result.xlsx
+#BiG-SCAPE annotation uing "--mibig"option
+python ./bigscape.py -i ./02.rep.BGC -o BiG-SCAPE.out --pfam_dir ./BiG-SCAPE-master/ -c 60 --cutoffs 0.3 --include_singletons --mode auto --mix --no_classify --mibig
 
-## 3.BiG-SLiCE
+```
+
+## 5.BiG-SLiCE
 
 ```sh
 #The BGC files in gbk format are organized into the input folder according to the developer's requirements (https://github.com/medema-group/bigslice), "bigslice_2.0.0_T0.4_16April" is downloaded from BGC Atlas database.
@@ -36,7 +48,7 @@ bigslice --query BGC/ --n_ranks 1 bigslice_2.0.0_T0.4_16April -t 60
 
 ```
 
-## 4.BGC_function_prediction
+## 6.BGC_function_prediction
 
 ```sh
 #run with Resistance Gene Identifier (RGI)
